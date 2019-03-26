@@ -1,6 +1,6 @@
 #WiFi based Locationing - LM and KNN
-#Minhaz 
-#V2
+#Minhaz
+#V3
 
 
 # Calling Packages --------------------------------------------------------
@@ -37,19 +37,19 @@ set.seed(121)
 
 # Define Cross Validation
 
-WiFi_fitControl<- 
+WiFi_fitControl<-
   trainControl(method = "repeatedcv", number = 10, repeats = 10)
 
 
 # Run an LM Model Building 0 and floor 0
 
-B0_F0_LM_Longitude <- train(LONGITUDE~. 
+B0_F0_LM_Longitude <- train(LONGITUDE~.
                           -LATITUDE -FLOOR -BUILDINGID -SPACEID -RELATIVEPOSITION
                           -USERID -PHONEID -TIMESTAMP,
                            data = Init_DF_Test_B0_F0,
                            method = "lm", trControl = WiFi_fitControl)
 
-B0_F0_LM_Latitude <- train(LATITUDE~. 
+B0_F0_LM_Latitude <- train(LATITUDE~.
                            -LONGITUDE -FLOOR -BUILDINGID -SPACEID -RELATIVEPOSITION
                            -USERID -PHONEID -TIMESTAMP,
                            data = Init_DF_Test_B0_F0,
@@ -68,7 +68,7 @@ postResample(B0_F0_LM_Longitude_Pred, Init_DF_Valid_B0_F0$LONGITUDE)
 
 # Create Data frame with predicted and real latitude and longitude from LM --------
 
-NDF <- data.frame(B0_F0_LM_Longitude_Pred, B0_F0_LM_Latitude_Pred, 
+NDF <- data.frame(B0_F0_LM_Longitude_Pred, B0_F0_LM_Latitude_Pred,
                   Init_DF_Valid_B0_F0$LONGITUDE, Init_DF_Valid_B0_F0$LATITUDE)
 
 NDF1 <- data.frame(B0_F0_LM_Longitude_Pred, B0_F0_LM_Latitude_Pred, rep("predicted"))
@@ -84,7 +84,7 @@ NDF3 <- rbind(NDF1, NDF2)
 # visualize
 
 Visual_B0_F0 <- ggplot(NDF3, aes(B0_F0_Latitude, B0_F0_Longitude,
-                                 colour = actual_Predicted)) + 
+                                 colour = actual_Predicted)) +
   geom_point() + xlab("Latitude") +
   ylab("Longitude") +
   ggtitle("LM result for Building 0 and Floor 0")
@@ -94,13 +94,13 @@ Visual_B0_F0 <- ggplot(NDF3, aes(B0_F0_Latitude, B0_F0_Longitude,
 
 # Run an KNN Model Building 0 and floor 0
 
-B0_F0_KNN_Longitude <- train(LONGITUDE~. 
+B0_F0_KNN_Longitude <- train(LONGITUDE~.
                             -LATITUDE -FLOOR -BUILDINGID -SPACEID -RELATIVEPOSITION
                             -USERID -PHONEID -TIMESTAMP,
                             data = Init_DF_Test_B0_F0,
                             method = "knn", trControl = WiFi_fitControl)
 
-B0_F0_KNN_Latitude <- train(LATITUDE~. 
+B0_F0_KNN_Latitude <- train(LATITUDE~.
                            -LONGITUDE -FLOOR -BUILDINGID -SPACEID -RELATIVEPOSITION
                            -USERID -PHONEID -TIMESTAMP,
                            data = Init_DF_Test_B0_F0,
@@ -120,15 +120,15 @@ postResample(B0_F0_knn_Longitude_Pred, Init_DF_Valid_B0_F0$LONGITUDE)
 # Create Data frame with predicted and real latitude and longitude --------
 
 
-NDF_KN_Predicted <- data.frame(B0_F0_knn_Longitude_Pred, 
-                               B0_F0_knn_Latitude_Pred, 
+NDF_KN_Predicted <- data.frame(B0_F0_knn_Longitude_Pred,
+                               B0_F0_knn_Latitude_Pred,
   rep("predicted"))
 
-NDF_KN_Actual <- data.frame(Init_DF_Valid_B0_F0$LONGITUDE, 
-                            Init_DF_Valid_B0_F0$LATITUDE, 
+NDF_KN_Actual <- data.frame(Init_DF_Valid_B0_F0$LONGITUDE,
+                            Init_DF_Valid_B0_F0$LATITUDE,
   rep("actual"))
 
-names(NDF_KN_Predicted) <- c("B0_F0_Longitude", "B0_F0_Latitude", 
+names(NDF_KN_Predicted) <- c("B0_F0_Longitude", "B0_F0_Latitude",
                              "actual_Predicted")
 
 names(NDF_KN_Actual) <- c("B0_F0_Longitude", "B0_F0_Latitude",
@@ -137,10 +137,10 @@ names(NDF_KN_Actual) <- c("B0_F0_Longitude", "B0_F0_Latitude",
 NDF_KNN <- rbind(NDF_KN_Predicted, NDF_KN_Actual)
 
 
-# Visualize KNN result  
+# Visualize KNN result
 
 Visual_KNN_B0_F0 <- ggplot(NDF_KNN, aes(B0_F0_Latitude, B0_F0_Longitude,
-                                 colour = actual_Predicted)) + 
+                                 colour = actual_Predicted)) +
   geom_point() + xlab("Latitude") +
   ylab("Longitude") +
   ggtitle("KNN result for Building 0 and Floor 0")
